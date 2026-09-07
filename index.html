@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Gym Logger" />
+  <title>Cameron Gym Logger</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CAMERON</div>
+        <h1>Gym Logger</h1>
+      </div>
+      <button id="themeBtn" class="icon-btn" aria-label="Toggle theme">◐</button>
+    </header>
+
+    <main>
+      <section id="homeView" class="view active">
+        <div class="hero-card">
+          <div>
+            <div class="eyebrow">FAST LOGGING</div>
+            <h2>Start moving. Log in seconds.</h2>
+            <p>Free-rotation by default. Main lifts stay pinned, accessories rotate around them.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="primary big" data-start-template="A">Start A</button>
+            <button class="primary big" data-start-template="B">Start B</button>
+            <button class="secondary big" data-start-template="blank">Blank</button>
+          </div>
+        </div>
+
+        <div class="grid-two">
+          <button class="nav-card" data-nav="history">
+            <span class="nav-icon">↺</span>
+            <span><strong>History</strong><small>All time, 30 days, exercise trends</small></span>
+          </button>
+          <button class="nav-card" data-nav="templates">
+            <span class="nav-icon">≡</span>
+            <span><strong>Templates</strong><small>Edit A/B and exercise settings</small></span>
+          </button>
+          <button class="nav-card" data-nav="export">
+            <span class="nav-icon">⇩</span>
+            <span><strong>Export</strong><small>CSV, JSON backup, ChatGPT text</small></span>
+          </button>
+          <button class="nav-card" data-nav="settings">
+            <span class="nav-icon">⚙</span>
+            <span><strong>Settings</strong><small>Bodyweight, units, default rests</small></span>
+          </button>
+        </div>
+
+        <div class="section-head"><h3>Recent workouts</h3></div>
+        <div id="recentWorkouts" class="stack"></div>
+      </section>
+
+      <section id="workoutView" class="view">
+        <div class="workout-head">
+          <button class="text-btn" id="backHomeBtn">← Home</button>
+          <div class="workout-title-wrap">
+            <div class="eyebrow" id="workoutTemplateLabel">WORKOUT</div>
+            <h2 id="workoutTitle">Workout A</h2>
+          </div>
+          <div class="session-clock" id="sessionClock">00:00</div>
+        </div>
+
+        <div class="workout-toolbar">
+          <button id="addExerciseBtn" class="secondary">+ Exercise</button>
+          <button id="finishWorkoutBtn" class="primary">Finish</button>
+        </div>
+
+        <div class="section-head"><h3>Pinned main lifts</h3><small>Protect their recovery</small></div>
+        <div id="pinnedList" class="exercise-list"></div>
+
+        <div class="section-head"><h3>Rotation</h3><small>Tap whatever is ready</small></div>
+        <div id="rotationList" class="exercise-list"></div>
+
+        <div class="section-head"><h3>Done</h3><small>Tap to reactivate</small></div>
+        <div id="doneList" class="exercise-list compact"></div>
+      </section>
+
+      <section id="historyView" class="view">
+        <div class="simple-head"><button class="text-btn" data-nav="home">← Home</button><h2>History</h2></div>
+        <div class="filter-row" id="historyFilters">
+          <button class="chip active" data-range="30">30 days</button>
+          <button class="chip" data-range="90">90 days</button>
+          <button class="chip" data-range="365">1 year</button>
+          <button class="chip" data-range="all">All time</button>
+        </div>
+        <div class="history-summary" id="historySummary"></div>
+        <div class="section-head"><h3>Workout history</h3></div>
+        <div id="historyList" class="stack"></div>
+        <div class="section-head"><h3>Exercise history</h3></div>
+        <select id="historyExerciseSelect" class="full-select"></select>
+        <div id="exerciseHistory" class="stack"></div>
+      </section>
+
+      <section id="templatesView" class="view">
+        <div class="simple-head"><button class="text-btn" data-nav="home">← Home</button><h2>Templates</h2></div>
+        <div class="template-tabs">
+          <button class="chip active" data-template-tab="A">A</button>
+          <button class="chip" data-template-tab="B">B</button>
+        </div>
+        <div id="templateEditor" class="stack"></div>
+        <button id="templateAddExercise" class="secondary full">+ Add exercise to template</button>
+      </section>
+
+      <section id="exportView" class="view">
+        <div class="simple-head"><button class="text-btn" data-nav="home">← Home</button><h2>Export & Backup</h2></div>
+        <div class="stack">
+          <div class="panel">
+            <h3>Spreadsheet export</h3>
+            <p>Exports every logged set as CSV. Open directly in Excel, Numbers, or Google Sheets.</p>
+            <button id="exportCsvBtn" class="primary full">Export CSV</button>
+          </div>
+          <div class="panel">
+            <h3>Full backup</h3>
+            <p>JSON keeps workouts, templates, exercises and settings together.</p>
+            <button id="exportJsonBtn" class="secondary full">Export JSON backup</button>
+            <label class="file-label">Restore JSON<input type="file" id="importJsonInput" accept="application/json" /></label>
+          </div>
+          <div class="panel">
+            <h3>Automatic spreadsheet sync — later</h3>
+            <p>The data model is already structured for this. V2 can push each finished workout to Google Sheets or another cloud destination automatically.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view">
+        <div class="simple-head"><button class="text-btn" data-nav="home">← Home</button><h2>Settings</h2></div>
+        <div class="panel form-grid">
+          <label>Bodyweight (lb)<input id="bodyweightInput" type="number" step="0.1" min="0" /></label>
+          <label>Default main-lift rest (sec)<input id="mainRestInput" type="number" step="15" min="30" /></label>
+          <label>Default accessory rest (sec)<input id="accessoryRestInput" type="number" step="15" min="15" /></label>
+          <button id="saveSettingsBtn" class="primary full">Save settings</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="scrim" class="scrim hidden"></div>
+
+  <div id="logSheet" class="sheet hidden" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div><div class="eyebrow" id="sheetSub">LOG SET</div><h2 id="sheetTitle">Bench Press</h2></div>
+      <button class="icon-btn" id="closeLogSheet">×</button>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card"><span>LAST SET TODAY</span><strong id="lastToday">—</strong></div>
+      <div class="compare-card"><span>LAST WORKOUT</span><strong id="lastWorkout">—</strong></div>
+    </div>
+
+    <div class="wheel-grid">
+      <label>Weight<select id="weightWheel" size="5" class="wheel"></select></label>
+      <label>Reps<select id="repsWheel" size="5" class="wheel"></select></label>
+      <label>RIR<select id="rirWheel" size="5" class="wheel"></select></label>
+    </div>
+
+    <div class="tag-wrap" id="setTypeTags"></div>
+
+    <div class="special-fields">
+      <label id="negativesWrap" class="hidden">Negatives<input id="negativeRepsInput" type="number" min="0" max="20" step="1" value="0" /></label>
+      <label id="partialsWrap" class="hidden">Partials<input id="partialRepsInput" type="number" min="0" max="50" step="1" value="0" /></label>
+      <label id="holdWrap" class="hidden">Hold sec<input id="holdSecondsInput" type="number" min="0" max="180" step="1" value="0" /></label>
+      <label id="assistWrap" class="hidden">Assist lb<input id="assistInput" type="number" min="0" max="300" step="2.5" value="0" /></label>
+    </div>
+
+    <div class="quick-notes" id="quickNotes"></div>
+    <textarea id="setNoteInput" rows="2" placeholder="Optional note…"></textarea>
+
+    <button id="logSetBtn" class="primary giant">LOG SET ✓</button>
+  </div>
+
+  <div id="exercisePickerSheet" class="sheet hidden" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h2>Add exercise</h2><button class="icon-btn" id="closeExercisePicker">×</button></div>
+    <input id="exerciseSearch" class="search" placeholder="Search exercises" />
+    <div id="exercisePickerList" class="picker-list"></div>
+  </div>
+
+  <div id="finishSheet" class="sheet hidden" role="dialog" aria-modal="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head"><h2>Finish workout</h2><button class="icon-btn" id="closeFinishSheet">×</button></div>
+    <div id="finishSummary" class="panel"></div>
+    <textarea id="workoutNotes" rows="3" placeholder="Workout notes…"></textarea>
+    <button id="copyChatBtn" class="secondary full">Copy for ChatGPT</button>
+    <button id="saveWorkoutBtn" class="primary giant">SAVE WORKOUT</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
