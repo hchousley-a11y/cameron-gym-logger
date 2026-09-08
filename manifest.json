@@ -1,0 +1,9 @@
+{
+  "name":"Cameron Gym Logger",
+  "short_name":"Gym Logger",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#08111f",
+  "theme_color":"#08111f",
+  "description":"Fast free-rotation strength and conditioning logger with multiple supersets"
+}
