@@ -1,0 +1,9 @@
+{
+  "name":"The Farmer Jim",
+  "short_name":"Farmer Jim",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#08111f",
+  "theme_color":"#08111f",
+  "description":"Strength and conditioning logger with workout targets, history, muscle-set tracking and fast set logging"
+}
